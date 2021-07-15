@@ -1,0 +1,588 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  	<title>P3 Coloring</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link rel="stylesheet" href="/static/coloring/styles.css" type="text/css">
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style type="text/css">
+    #tools > img {
+        height: 5.5vh;
+        margin-left: 6%;
+        margin-right: 6%;
+        cursor: pointer;
+    }
+    .tool_modal {
+        background-color: #12C2E9;
+        margin-top: 10.5vh;
+        text-align: center;
+        font-size: 0;
+        z-index: 4;
+        position: absolute;
+        width: 100%;
+        padding-bottom: 4vh;
+    }
+    #shape_modal > div > div {
+        background-color: white;
+        float: left;
+        display: block;
+        cursor: pointer;
+        margin-left: 1vh;
+        margin-right: 1vh;
+    }
+    #sizes_modal div {
+        cursor: auto;
+        background-color: transparent;
+    }
+    #color_modal div {
+        cursor: auto;
+        background-color: transparent; 
+    }
+    .sliders {
+        float: left;
+        text-align: right;
+        background-color: transparent;
+        font-size: 0;
+        width: 33vh;
+    }
+    .sliders input {
+        display: block;
+        padding: 0;
+        margin: 0;
+        height: 2vh;
+        width: 100%;
+        border-radius: 0.5vh;
+        background-color: transparent;
+        color: transparent;
+        -webkit-appearance: none;
+    }
+    .sliders input::-webkit-slider-track {
+        background: transparent;
+        color: transparent;
+    }
+    .sliders input::-moz-range-track {
+        background: transparent;
+        color: transparent;
+    }
+    .sliders input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: white;
+        height: 3vh;
+        width: 3vh;
+        border-radius: 0.5vh;
+        cursor: pointer;
+    }
+    .sliders input::-moz-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: white;
+        height: 3vh;
+        width: 3vh;
+        border-radius: 0.5vh;
+        cursor: pointer;
+    }
+    .titles {
+        position: absolute; 
+        z-index: 2;
+        top: 17.5vh;
+        width: 100%;
+        text-align: center;
+        display: none;
+    }
+    #artboard {
+        background-color: white;
+        background-size: cover;
+        background-position: center;
+        filter: drop-shadow(0vh 1vh 1vh rgba(0, 0, 0, 0.4));
+        height: 50vh;
+        width: 50vh;
+        position: absolute;
+        margin: 25vh auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+    }
+    #refpic {
+        height: 10.2vh;
+        width: 10.2vh;
+        position: absolute; 
+        top: 25vh;
+        right: calc((100vw - 50vh) / 2);
+        background-image: url('https://i.imgur.com/fbwGlWk.jpg');
+        background-size: cover;
+        background-position: center;
+        filter: drop-shadow(0vh 1vh 1vh rgba(0, 0, 0, 0.4));
+        z-index: 3;
+        cursor: move;
+        display: none;
+    }
+    #options {
+        font-size: 0;
+        text-align: center;
+        position: absolute;
+        bottom: 16vh;
+        width: 100%;
+    }
+    #options img {
+        height: 5vh;
+        margin-left: 5%;
+        margin-right: 5%;
+        cursor: pointer;
+    }
+    .options_modal {
+        display: none;
+        position: absolute;
+        background-image: linear-gradient(rgba(18, 194, 233, 1), rgba(196, 113, 237, 0.9) 65%, rgba(247, 121, 125, 0.9));
+        height: 25vh;
+        width: 50vh;
+        margin: 0;
+        padding: 0;
+        padding: 37.5vh calc(50% - 25vh);
+        text-align: center;
+        font-size: 0;
+        z-index: 4;
+    }
+    .options_modal h3 {
+        margin-bottom: 2.5vh; 
+    }
+    button {
+        outline: none;
+		border: none;
+		border-radius: 0.5vh;
+		cursor: pointer;
+        padding: 1.5vh;
+        width: 20vh;
+    }
+    nav {
+        z-index: 5;
+    }
+    </style>
+</head>
+<body>
+    <!-- Upper Half -->
+    <div id="tools" style="background-color: #12C2E9; top: 0; height: 5.5vh; padding-top: 3vh; padding-bottom: 3vh; text-align: center; position: absolute; width: 100%; font-size: 0;">
+        <img id="shape" src="https://i.imgur.com/X2gGTyd.png" style="opacity: 1.0"/>
+        <img id="erase" src="https://i.imgur.com/LMU4cPE.png" style="opacity: 0.75"/>
+        <img id="sizes" src="https://i.imgur.com/P5lMCB8.png"/>
+        <img id="color" src="https://i.imgur.com/UeB6w4n.png"/>
+    </div>
+    <div class="tool_modal" id="shape_modal" style="display: none; width: 50vh; padding-left: calc((100vw - 50vh) / 2); padding-right: calc((100vw - 50vh) / 2);">
+        <h3 style="margin-bottom: 2.5vh;">Choose Brush Shape</h3>
+        <div style="float: left; font-size: 0; padding-top: 3.5vh; width: 37vh">
+            <div id="shape_circ" style="width: 3vh; height: 3vh; border-radius: 50%; margin-left: 0;"></div>
+            <div id="shape_tall" style="width: 0.5vh; height: 3vh; border-radius: 0.25vh / 1.5vh;"></div>
+            <div id="shape_wide" style="width: 0.5vh; height: 3vh; border-radius: 0.25vh / 1.5vh; transform: rotate(90deg); margin-left: 2.25vh; margin-right: 2.25vh;"></div>
+            <div id="shape_slup" style="width: 0.5vh; height: 3vh; border-radius: 0.25vh / 1.5vh; transform: rotate(45deg); margin-left: 1.87vh; margin-right: 1.87vh;"></div>
+            <div id="shape_sldo" style="width: 0.5vh; height: 3vh; border-radius: 0.25vh / 1.5vh; transform: rotate(135deg); margin-left: 1.87vh; margin-right: 1.87vh;"></div>
+            <div id="shape_diam" style="width: 2.12vh; height: 2.12vh; transform: rotate(45deg); margin-top: 0.5vh; margin-left: 1.5vh; margin-right: 1.5vh;"></div>
+            <div id="shape_sqre" style="width: 3vh; height: 3vh;"></div>
+            <div id="shape_trig" style="width: 0; height: 0; border-left: 1.73vh solid transparent; border-right: 1.73vh solid transparent; border-bottom: 3vh solid white; background-color: transparent;"></div>
+        </div>
+        <div id="shape-preview" style="background-color: white; height: 10vh; width: 10vh; border-radius: 50%; float: right;"></div>
+    </div>
+    <div class="tool_modal" id="erase_modal" style="display: none;">
+        <h3>Choose Eraser Size</h3>
+        <div style="margin: 0 auto; margin-top: 2.5vh; margin-bottom: 4vh; width: 50vh;">
+            <div class="sliders" style="margin-right: 3vh; width: 37vh">
+                <input type="range" id="esize" min="1" max="100" oninput="setEraser()" style="background-color: rgba(255, 255, 255, 0.5); margin-top: 4vh">
+            </div>
+            <div id="erase-preview" style="background-color: white; height: 5vh; width: 5vh; margin: 2.5vh; border-radius: 50%; float: left;"></div>
+        </div>
+    </div>
+    <div class="tool_modal" id="sizes_modal" style="display: none;">
+        <h3>Choose Brush Size</h3>
+        <div style="margin: 0 auto; margin-top: 2.5vh; margin-bottom: 4vh; width: 50vh;">
+            <div class="sliders" style="margin-right: 3vh; width: 37vh">
+                <input type="range" id="size" min="1" max="100" oninput="setSize()" style="background-color: rgba(255, 255, 255, 0.5); margin-top: 4vh">
+            </div>
+            <div id="sizes-preview" style="background-color: white; height: 5vh; width: 5vh; margin: 2.5vh; border-radius: 50%; float: left;"></div>
+        </div>
+    </div>
+    <div class="tool_modal" id="color_modal" style="display: none;">
+        <h3>Choose Brush Color</h3>
+        <div style="margin: 0 auto; margin-top: 2.5vh; margin-bottom: 4vh; width: 50vh;">
+            <div class="sliders">
+                <input type="range" id="hue" min="0" max="360" oninput="setColor()" style="margin-bottom: 2vh;">
+                <input type="range" id="sat" min="0" max="100" oninput="setColor()" style="margin-bottom: 2vh;">
+                <input type="range" id="lit" min="0" max="100" oninput="setColor()" style="margin-bottom: 2vh;">
+                <input type="range" id="trn" min="0" max="100" oninput="setColor()">
+            </div>
+            <div id="color-preview" style="height: 14vh; width: 14vh; border-radius: 0.5vh; float: left; margin-left: 3vh;"></div>
+        </div>
+    </div>
+
+    <!-- Lower Half -->
+    <h3 id="ptitle" class="titles">Birthday Cake</h3>
+    <h3 id="rtitle" class="titles">Minecraft Fox</h3>
+    <h3 id="otitle" class="titles">Three Roses</h3>
+    <canvas id="artboard"></canvas>
+    <div id="containment" style="position: absolute; height: 63.5vh; width: 50vh; top: 11.5vh; left: calc(50vw - 25vh);"></div>
+    <div id="refpic"></div>
+    <div id="options">
+        <img id="dload" src="https://i.imgur.com/tn8sFxg.png"/>
+        <img id="share" src="https://i.imgur.com/xit2UOF.png"/>
+        <img id="trash" src="https://i.imgur.com/cZND0uP.png"/>
+    </div>
+    <div class="options_modal" id="dload_modal">
+        <h3>Are you sure you want to <strong style="font-weight: 500;">download</strong> your drawing?</h3>
+        <a id="dloader" download="colorclash.png" href="" onclick="plsdload()" style="display: inline-block; text-decoration: none; margin: 0; margin-right: 2.5vh; padding: 0;"><button style="background-color: white; border: 0.1vh solid white;"><h4 style="color: #9A94ED">Download</h4></button></a>
+        <button id="close_dload" style="background-color: transparent; border: 0.1vh solid white;"><h4>Cancel</h4></button>
+    </div>
+    <div class="options_modal" id="share_modal">
+        <h3>Are you sure you want to <strong style="font-weight: 500;">share</strong> your drawing for clashes?</h3>
+        <a href="clashes" style="display: inline-block; text-decoration: none; margin: 0; margin-right: 2.5vh; padding: 0;"><button style="background-color: white; border: 0.1vh solid white;"><h4 style="color: #B688EE;">Share</h4></button></a>
+        <button id="close_share" style="background-color: transparent; border: 0.1vh solid white;"><h4>Cancel</h4></button>
+    </div>
+    <div class="options_modal" id="trash_modal">
+        <h3>Are you sure you want to <strong style="font-weight: 500;">delete</strong> your drawing?</h3>
+        <a href="home" style="display: inline-block; text-decoration: none; margin: 0; margin-right: 2.5vh; padding: 0;"><button style="background-color: white; border: 0.1vh solid white;"><h4 style="color: #A88EEE;">Delete</h4></button></a>
+        <button id="close_trash" style="background-color: transparent; border: 0.1vh solid white;"><h4>Cancel</h4></button>
+    </div>
+    <nav>
+		<a href="home"><img src="https://i.imgur.com/nYUeOdV.png"></a>
+		<a href="clashes"><img src="https://i.imgur.com/sPbtI47.png"></a>
+		<a href="profile"><img src="https://i.imgur.com/s1nX6sX.png"></a>
+	</nav>
+    <script id="type_script">
+        const draw_type = new URLSearchParams(window.location.search).get('type');
+        var dloader = document.getElementById("dloader");
+        $( function() {
+            $( "#refpic" ).draggable({
+                containment: '#containment', 
+                scroll: false,
+                stop: function(e, ui) {
+                    var perc = ui.position.left / ui.helper.parent().width() * 100;
+                    ui.helper.css('left', perc + '%');
+                }
+            });
+        } );
+        if (draw_type == "prompt") {
+            document.getElementById("ptitle").style.display = 'block';
+            dloader.download = "birthday_cake.png";
+        } else if (draw_type == "reference") {
+            document.getElementById("rtitle").style.display = 'block';
+            document.getElementById("refpic").style.display = 'block';
+            dloader.download = "minecraft_fox.png";
+        } else if (draw_type == "outline") {
+            document.getElementById("otitle").style.display = 'block';
+            document.getElementById("artboard").style.backgroundImage = 'url(https://i.imgur.com/o56LvPR.jpg)';
+            dloader.download = "three_roses.png";
+        } else {
+            console.log("wack");
+        }
+    </script>
+    <script id="brush_script">
+        var shape_circ = document.getElementById("shape_circ");
+        var shape_tall = document.getElementById("shape_tall");
+        var shape_wide = document.getElementById("shape_wide");
+        var shape_slup = document.getElementById("shape_slup");
+        var shape_sldo = document.getElementById("shape_sldo");
+        var shape_diam = document.getElementById("shape_diam");
+        var shape_sqre = document.getElementById("shape_sqre");
+        var shape_trig = document.getElementById("shape_trig");
+        var shapePreview = document.getElementById("shape-preview");
+        
+        shape_circ.onclick = function() {
+            shapePreview.style.width = '10vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = '50%'
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '0';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'none';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_tall.onclick = function() {
+            shapePreview.style.width = '2vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = '1vh / 5vh';
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '4vh';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'none';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_wide.onclick = function() {
+            shapePreview.style.width = '2vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = '1vh / 5vh';
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '4vh';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'rotate(90deg)';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_slup.onclick = function() {
+            shapePreview.style.width = '2vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = '1vh / 5vh';
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '4vh';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'rotate(45deg)';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_sldo.onclick = function() {
+            shapePreview.style.width = '2vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = '1vh / 5vh';
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '4vh';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'rotate(135deg)';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_diam.onclick = function() {
+            shapePreview.style.width = '7.07vh';
+            shapePreview.style.height = '7.07vh';
+            shapePreview.style.borderRadius = 0;
+            shapePreview.style.marginTop = '1.46vh';
+            shapePreview.style.marginRight = '1.46vh';
+            shapePreview.style.marginBottom = '1.46vh';
+            shapePreview.style.transform = 'rotate(225deg)';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_sqre.onclick = function() {
+            shapePreview.style.width = '10vh';
+            shapePreview.style.height = '10vh';
+            shapePreview.style.borderRadius = 0;
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '0';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'none';
+            shapePreview.style.border = 'none';
+            shapePreview.style.backgroundColor = 'white';
+        }
+        shape_trig.onclick = function() {
+            shapePreview.style.width = '0';
+            shapePreview.style.height = '0';
+            shapePreview.style.borderRadius = 0;
+            shapePreview.style.marginTop = '0';
+            shapePreview.style.marginRight = '0';
+            shapePreview.style.marginBottom = '0';
+            shapePreview.style.transform = 'none';
+            shapePreview.style.borderLeft = '5.77vh solid transparent';
+            shapePreview.style.borderRight = '5.77vh solid transparent';
+            shapePreview.style.borderBottom = '10vh solid white';
+            shapePreview.style.backgroundColor = 'transparent';
+        }
+        var eSizeInput = document.getElementById("esize");
+        var eSizePreview = document.getElementById("erase-preview");
+        window.onload = function() {
+            setEraser();
+        }
+        function setEraser() {
+            eSizePreview.style.height = eSizeInput.value / 10 + "vh";
+            eSizePreview.style.width = eSizeInput.value / 10 + "vh";
+            eSizePreview.style.margin = (10 - eSizeInput.value / 10) / 2 + "vh";
+        }
+        var sizeInput = document.getElementById("size");
+        var sizePreview = document.getElementById('sizes-preview');
+        window.onload = function() {
+            setSize();
+        }
+        function setSize() {
+            sizePreview.style.height = sizeInput.value / 10 + "vh";
+            sizePreview.style.width = sizeInput.value / 10 + "vh";
+            sizePreview.style.margin = (10 - sizeInput.value / 10) / 2 + "vh";
+        }
+        var hInput, sInput, lInput, aInput;
+        window.onload = function() {
+            hInput = document.getElementById("hue");
+            sInput = document.getElementById("sat");
+            lInput = document.getElementById("lit");
+            aInput = document.getElementById("trn")
+            sInput.value = 100;
+            aInput.value = 100;
+            setColor();
+        }
+        function setColor() {
+            document.getElementById('color-preview').style.backgroundColor = hsla(hInput.value, sInput.value, lInput.value, aInput.value);
+            setGradient(hInput, [hsla(0, sInput.value, lInput.value, aInput.value), hsla(60, sInput.value, lInput.value, aInput.value), hsla(120, sInput.value, lInput.value, aInput.value), hsla(180, sInput.value, lInput.value, aInput.value), hsla(240, sInput.value, lInput.value, aInput.value), hsla(300, sInput.value, lInput.value, aInput.value), hsla(360, sInput.value, lInput.value, aInput.value)]);
+            setGradient(sInput, [hsla(hInput.value, 0, lInput.value, aInput.value), hsla(hInput.value, 100, lInput.value, aInput.value)]);
+            setGradient(lInput, [hsla(hInput.value, sInput.value, 0, aInput.value), hsla(hInput.value, sInput.value, 50, aInput.value), hsla(hInput.value, sInput.value, 100, aInput.value)]);
+            setGradient(aInput, [hsla(hInput.value, sInput.value, lInput.value, 0), hsla(hInput.value, sInput.value, lInput.value, 100)]);
+        }
+        function setHslSliders(h, s, l, a) {
+            hInput.value = h;
+            sInput.value = s;
+            lInput.value = l;
+            aInput.value = a;
+        }
+        function setGradient(el, steps) {
+            gradientString = "linear-gradient(to right,";
+            stepSize = 100 / (steps.length - 1);
+            for(var i = 0; i < steps.length; i++) {
+                gradientString +=  (i > 0 ? "," : "") + steps[i] + (i * stepSize) + "%";
+            }
+            el.style.backgroundImage = gradientString + ")";
+        }
+        function hsla(h, s, l, a) {
+            return "hsla(" + h + "," + s + "%," + l +"%," + a + "%)";
+        }
+    </script>
+    <script id="options_script">
+        var dload = document.getElementById("dload");
+        var share = document.getElementById("share");
+        var trash = document.getElementById("trash");
+        var dload_modal = document.getElementById("dload_modal");
+        var share_modal = document.getElementById("share_modal");
+        var trash_modal = document.getElementById("trash_modal");
+        function plsdload() {
+            var canva = document.getElementById("artboard");
+            dloader.href = canva.toDataURL();
+            console.log(dloader.href);
+        }
+        dload.onclick = function() {
+			dload_modal.style.display = "block";
+		}
+		close_dload.onclick = function() {
+			dload_modal.style.display = "none";
+		}
+        share.onclick = function() {
+			share_modal.style.display = "block";
+		}
+		close_share.onclick = function() {
+			share_modal.style.display = "none";
+		}
+        trash.onclick = function() {
+			trash_modal.style.display = "block";
+		}
+		close_trash.onclick = function() {
+			trash_modal.style.display = "none";
+		}
+        jQuery.event.special.touchstart = {
+            setup: function( _, ns, handle ){
+              if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchstart", handle, { passive: false });
+              } else {
+                this.addEventListener("touchstart", handle, { passive: true });
+              }
+            }
+        };
+        jQuery.event.special.touchmove = {
+            setup: function( _, ns, handle ){
+              if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchmove", handle, { passive: false });
+              } else {
+                this.addEventListener("touchmove", handle, { passive: true });
+              }
+            }
+        };
+    </script>
+    <script type="text/paperscript" canvas="artboard">
+        var shp = document.getElementById("shape-preview");
+        var erp = document.getElementById("erase-preview");
+        var szp = document.getElementById("sizes-preview");
+        var clp = document.getElementById("color-preview");
+        var px;
+        var py;
+        var erasing = false;
+        var shape = document.getElementById("shape");
+        var erase = document.getElementById("erase");
+        var sizes = document.getElementById("sizes");
+        var color = document.getElementById("color");
+        shape.onclick = function() { 
+            shape_modal.style.display = "block"; 
+            if (erasing) {
+                document.getElementById("shape").style.opacity = 1.0;
+                document.getElementById("erase").style.opacity = 0.75;
+                erasing = false;
+            }
+        }
+        erase.onclick = function() {
+            erase_modal.style.display = "block"; 
+            if (!erasing) {
+                document.getElementById("shape").style.opacity = 0.75;
+                document.getElementById("erase").style.opacity = 1.0;
+                erasing = true;
+            }
+        }
+        sizes.onclick = function() { sizes_modal.style.display = "block"; }
+        color.onclick = function() { color_modal.style.display = "block"; }
+        $(document).on('mousedown', function(event) {
+            if (!$(event.target).closest('#shape_modal').length && !$(event.target).closest('#shape').length) {
+                shape_modal.style.display = "none";
+            }
+            if (!$(event.target).closest('#erase_modal').length && !$(event.target).closest('#erase').length) {
+                erase_modal.style.display = "none";
+            }
+            if (!$(event.target).closest('#sizes_modal').length && !$(event.target).closest('#sizes').length) {
+                sizes_modal.style.display = "none";
+            }
+            if (!$(event.target).closest('#color_modal').length && !$(event.target).closest('#color').length) {
+                color_modal.style.display = "none";
+            }
+        });
+        function onMouseDrag(event) {
+            px = event.point.x;
+            py = event.point.y;
+            if (erasing) {
+                sizee = parseInt(erp.style.height.replace('vh','')) * 5;
+                new Shape.Ellipse({center: [px, py], radius: [sizee, sizee], fillColor: new Color(1, 1, 1)});
+            } else {
+                sizep = parseInt(szp.style.height.replace('vh','')) * 5;
+                if (shp.style.width == '0px') {
+                    var triangle = new Path.RegularPolygon(new Point(px, py), 3, sizep);
+                    triangle.fillColor = clp.style.backgroundColor;
+                } else if (shp.style.width == '7.07vh') {
+                    var diamond = new Path.RegularPolygon(new Point(px, py), 4, sizep);
+                    diamond.rotate(45);
+                    diamond.fillColor = clp.style.backgroundColor;
+                } else if (shp.style.width == '2vh') {
+                    var ellipse = new Shape.Ellipse({center: [px, py], radius: [sizep/10, sizep/2], fillColor: clp.style.backgroundColor})
+                    if (shp.style.transform == 'rotate(45deg)') {
+                        ellipse.rotate(45);
+                    } else if (shp.style.transform == 'rotate(90deg)') {
+                        ellipse.rotate(90);
+                    } else if (shp.style.transform == 'rotate(135deg)') {
+                        ellipse.rotate(135);
+                    }
+                } else if (shp.style.width == '10vh') {
+                    if (shp.style.borderRadius == '50%') {
+                        new Shape.Ellipse({center: [px, py], radius: [sizep/2, sizep/2], fillColor: clp.style.backgroundColor});
+                    } else {
+                        var square = new Path.RegularPolygon(new Point(px, py), 4, sizep);
+                        square.fillColor = clp.style.backgroundColor;
+                    }
+                }
+            }
+        }
+        jQuery.event.special.touchstart = {
+            setup: function( _, ns, handle ){
+              if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchstart", handle, { passive: false });
+              } else {
+                this.addEventListener("touchstart", handle, { passive: true });
+              }
+            }
+        };
+        jQuery.event.special.touchmove = {
+            setup: function( _, ns, handle ){
+              if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchmove", handle, { passive: false });
+              } else {
+                this.addEventListener("touchmove", handle, { passive: true });
+              }
+            }
+        };
+    </script>
+</body>
+</html>

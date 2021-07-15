@@ -1,0 +1,210 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  	<title>P3 Coloring</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="/static/coloring/styles.css" type="text/css">
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+	<style>
+	#leader-grid {
+		width: 100%;
+		max-width: 50vh;
+		margin: 0 auto;
+		margin-top: 4.5vh;
+		height: 57.5vh;
+		background-color: rgba(255, 255, 255, 0.25);
+		padding: 0;
+		text-align: center;
+		padding-top: 2vh;
+		padding-left: calc(50% - 25vh);
+		padding-right: calc(50% - 25vh);
+		padding-bottom: 14.5vh;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		position: relative;
+	}
+	::-webkit-scrollbar {
+		display: none;
+	}
+	.drawing {
+		width: 100%;
+		font-weight: 300;
+		font-size: 3vh;
+		line-height: 3vh;
+		height: 6vh;
+		text-align: left;
+		display: block;
+		padding-top: 1vh;
+		padding-bottom: 1vh;
+		text-decoration: none;
+		color: white;
+		z-index: 4;
+		position: relative;
+		cursor: pointer;
+	}
+	.drawing > span {
+		display: inline-block;
+		width: 5vh;
+		text-align: right;
+	}
+	.zuko {
+		display: inline-block;
+		height: 6vh;
+		width: 6vh;
+		background-image: url('https://i.imgur.com/E8Fth0v.jpg');
+		background-size: cover;
+		background-position: center;
+		margin-left: 2vh;
+		margin-right: 2vh;
+		transform: translateY(1.5vh);
+	}
+	#yikes {
+		display: block;
+		position: absolute;
+		background-color: rgba(255, 255, 255, 0.25);
+		width: 100%;
+		top: 11.5vh;
+		margin-left: calc(25vh - 50%);
+		height: 8vh;
+		z-index: 3;
+		cursor: pointer;
+	}
+	#display-modal {
+		position: absolute; 
+		display: none; 
+		width: 100%;
+		height: 100vh;
+		margin: 0;
+        padding: 0; 
+		top: 0;
+		z-index: 4; 
+		background-image: linear-gradient(rgba(18, 194, 233, 1), rgba(196, 113, 237, 0.9) 65%, rgba(247, 121, 125, 0.9));
+	}
+	#big-display {
+		width: 50vh;
+		margin: 0 auto;
+		margin-top: 4.5vh;
+		height: 50vh;
+		background-image: url('https://i.imgur.com/E8Fth0v.jpg');
+		background-size: cover;
+		background-position: center;
+	}
+	#stars {
+		padding-top: 3.5vh;
+		margin: 0 auto;
+		width: fit-content;
+	}
+	#stars > div {
+		background-image: url('https://i.imgur.com/SmmvmWf.png');
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
+		cursor: pointer;
+		margin-left: 1vh;
+		width: 6.29vh;
+		height: 6vh;
+		float: left;
+	}
+	</style>
+</head>
+<body>
+	<h1 id="goback" style="position: absolute; right: 5vh; top: 2vh; cursor: pointer;">&times;</h1>
+	<h2 style="text-align: center; padding-top: 8vh">Zuko (Prompt)</h2>
+	<h2 style="text-align: center;">Leaderboard</h2>
+	<div id="leader-grid">
+		<div class="drawing"><span>1</span><div class="zuko"></div>Bob the Builder</div>
+		<div class="drawing"><span>2</span><div class="zuko"></div>You</div>
+		<div class="drawing"><span>3</span><div class="zuko"></div>Korra</div>
+		<div class="drawing"><span>4</span><div class="zuko"></div>Toph Beifong</div>
+		<div class="drawing"><span>5</span><div class="zuko"></div>Troye Sivan</div>
+		<div class="drawing"><span>6</span><div class="zuko"></div>Ariana Grande</div>
+		<div class="drawing"><span>7</span><div class="zuko"></div>Nicki Minaj</div>
+		<div class="drawing"><span>8</span><div class="zuko"></div>Doja Cat</div>
+		<div class="drawing"><span>9</span><div class="zuko"></div>Chris Hemsworth</div>
+		<div class="drawing"><span>10</span><div class="zuko"></div>Chris Evans</div>
+		<div class="drawing"><span>11</span><div class="zuko"></div>Chris Pine</div>
+		<div class="drawing"><span>12</span><div class="zuko"></div>Chris Pratt</div>
+		<div class="drawing"><span>13</span><div class="zuko"></div>Cersei Lannister</div>
+		<div class="drawing"><span>14</span><div class="zuko"></div>Daenerys Targaryen</div>
+		<div class="drawing"><span>15</span><div class="zuko"></div>Jon Snow</div>
+		<div class="drawing"><span>16</span><div class="zuko"></div>Eddard Stark</div>
+		<div id="yikes"></div>
+	</div>
+	<div id="display-modal">
+		<h1 id="exit_display" style="position: absolute; right: 5vh; top: 2vh; cursor: pointer;">&times;</h1>
+		<h2 style="text-align: center; padding-top: 8vh">Zuko (Prompt) by</h2>
+		<h2 style="text-align: center;">Bob the Builder</h2>
+		<div id="big-display"></div>
+		<div id="stars">
+			<div id="star1" style="margin-left: 0;"></div>
+			<div id="star2"></div>
+			<div id="star3"></div>
+			<div id="star4"></div>
+			<div id="star5"></div>
+		</div>
+	</div>
+	<nav style="z-index: 5">
+		<a href="home"><img src="https://i.imgur.com/nYUeOdV.png"></a>
+		<a href="clashes"><img src="https://i.imgur.com/sPbtI47.png"></a>
+		<a href="profile"><img src="https://i.imgur.com/s1nX6sX.png"></a>
+	</nav>
+	<script>
+		var drawings = document.getElementsByClassName("drawing");
+		var displayModal = document.getElementById("display-modal");
+		exit_display.onclick = function() {
+			displayModal.style.display = 'none';
+		}
+		goback.onclick = function() {
+			window.history.back();
+		}
+        for(var i = 0; i < drawings.length; i++) {
+            var draw = drawings[i];
+            draw.onclick = function() {
+                displayModal.style.display = 'block';
+            }
+        }
+		star1.onclick = function() {
+			star1.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star2.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star3.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star4.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star5.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+		}
+		star2.onclick = function() {
+			star1.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star2.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star3.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star4.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star5.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+		}
+		star3.onclick = function() {
+			star1.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star2.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star3.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star4.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+			star5.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+		}
+		star4.onclick = function() {
+			star1.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star2.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star3.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star4.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star5.style.backgroundImage = 'url(https://i.imgur.com/SmmvmWf.png)';
+		}
+		star5.onclick = function() {
+			star1.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star2.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star3.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star4.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+			star5.style.backgroundImage = 'url(https://i.imgur.com/d4TQb00.png)';
+		}
+	</script>
+</body>
+</html>

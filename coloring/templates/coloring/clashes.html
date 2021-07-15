@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  	<title>P3 Coloring</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="/static/coloring/styles.css" type="text/css">
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+
+	<style type="text/css">
+	#clash-grid {
+		width: 100%;
+		max-width: 78vh;
+		margin-top: 4.5vh;
+		height: 56vh;
+		background-color: rgba(255, 255, 255, 0.25);
+		padding: 0;
+		text-align: center;
+		padding-top: 4vh;
+		padding-left: calc(50% - 39vh);
+		padding-right: calc(50% - 39vh);
+		padding-bottom: 6vh;
+		overflow-x: hidden;
+		overflow-y: scroll;
+	}
+	.drawing {
+		display: inline-block;
+		width: 15vh;
+		padding: 2vh;
+		padding-bottom: 0;
+		text-align: center;
+		text-decoration: none;
+	}
+	.drawing:hover {
+		opacity: 0.85;
+		cursor: pointer;
+	}
+	.drawing > div {
+		width: 15vh;
+		height: 4vh;
+		margin: 0;
+		margin-bottom: 0.5vh;
+		background-size: cover;
+		background-position: center;
+		position: relative;
+		text-align: center;
+		font-size: 4vh;
+		line-height: 4vh;
+		padding-top: 5.5vh;
+		color: white;
+		padding-bottom: 5.5vh;
+		text-shadow: 0vh 0.5vh 0.5vh rgba(0, 0, 0, 0.8);
+	}
+	::-webkit-scrollbar {
+		display: none;
+	}
+	</style>
+</head>
+<body>
+	<h2 style="text-align: center; padding-top: 8vh;">Your Clash</h2>
+	<h2 style="text-align: center;">Rankings</h2>
+	<div id="clash-grid">
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ZgdHVHZ.jpg)">1st</div><p>Cerebrus</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/3LawXJD.jpg)">2nd</div><p>Drawing Kirby</p><p>(Reference)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/jhebjfQ.png)">5th</div><p>Surgeons</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/lS0wBH6.png)">7th</div><p>Cake Slice</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/HsbIwol.png)">10th</div><p>Pondering</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/PQUA2VN.png)">25th</div><p>Gudetama</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ZjQ3AZn.jpg)">35th</div><p>Minecraft Fox</p><p>Reference</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/mp6dixE.jpg)">49th</div><p>Pollution</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/e1Eu81Z.jpg)">69th</div><p>Reaching</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/627iut8.jpg)">88th</div><p>Classic Blue</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/HZuhNbi.jpg)">89th</div><p>Pears</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/IGkKfxF.jpg)">91st</div><p>Grapefruits</p><p>(Reference)</p></a>
+	</div>
+	<nav style="z-index: 2">
+		<a href="home"><img src="https://i.imgur.com/nYUeOdV.png"></a>
+		<a href="clashes"><img src="https://i.imgur.com/sPbtI47.png"></a>
+		<a href="profile"><img src="https://i.imgur.com/s1nX6sX.png"></a>
+	</nav>
+</body>
+</html>

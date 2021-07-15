@@ -1,0 +1,221 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  	<title>P3 Coloring</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link rel="stylesheet" href="/static/coloring/styles.css" type="text/css">
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+	<style type="text/css">
+	button {
+		background-color: white;
+		outline: none;
+		border: none;
+		border-radius: 0.5vh;
+		cursor: pointer;
+	}
+	.drawing {
+		display: inline-block;
+		padding: 0.5vh;
+		text-align: center;
+		text-decoration: none;
+		background-color: transparent;
+	}
+	.drawing:hover {
+		opacity: 0.85;
+		cursor: pointer;
+	}
+	.drawing > div {
+		width: 10vh;
+		height: 10vh;
+		margin: 0;
+		margin-bottom: 0.5vh;
+		background-size: cover;
+		background-position: center;
+		position: relative;
+	}
+	.drawing > div > img {
+		position: absolute;
+		top: 1vh;
+		right: 1vh;
+		height: 2.5vh;
+	}
+	#type-pop {
+		display: block;
+		background-color: white;
+		border-radius: 0.5vh;
+		width: fit-content;
+		overflow: hidden;
+		margin: 5vh auto;
+	}
+	#type-pop > button {
+		display: block;
+		width: 60vw;
+		height: 16vh;
+		margin: 3vh;
+	}
+	#type-pop > button > h2 {
+		line-height: 7vh;
+	}
+	#type-pop > button > p {
+		padding-left: 3vh;
+		padding-right: 3vh;
+	}
+	.scrollable {
+		background-color: rgba(255, 255, 255, 0.25);
+		cursor: grab;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		white-space: nowrap; 
+		height: 15vh; 
+		padding: 0.5vh; 
+		padding-top: 3vh; 
+		padding-bottom: 2vh; 
+		font-size: 0;
+	}
+	::-webkit-scrollbar {
+		display: none;
+	}
+	</style>
+</head>
+<body>
+	<h2 id="greeting" style="margin: 0; margin-bottom: 4.5vh; text-align: center; padding-top: 8vh;">Howdy, Earl!</h2>
+	<button id="open-new" style="display: block; margin: 0 auto; cursor: pointer;">
+		<h2 style="float: left; line-height: 6.8vh; height: 8vh; color: #45ABEA; padding-right: 2vh; margin-left: 1.5vh; border-right: 0.25vh #45ABEA solid">+</h2>
+		<h3 style="float: left; line-height: 8vh; color: #45ABEA; margin-left: 3vh; margin-right: 3vh;">New Drawing</h3>
+	</button>
+	<h3 style="text-align: center; margin: 0; margin-top: 4vh; margin-bottom: 2vh;">Your Previous Drawings</h3>
+	<form class="scrollable" id="scroll1" action="artboard" method="GET">
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/lS0wBH6.png)"></div><p>Cake Slice</p><p>(Outline)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/3LawXJD.jpg)"></div><p>Drawing Kirby</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/PQUA2VN.png)"></div><p>Gudetama</p><p>(Outline)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/ZjQ3AZn.jpg)"></div><p>Minecraft Fox</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/HZuhNbi.jpg)"></div><p>Pears</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/IGkKfxF.jpg)"></div><p>Grapefruits</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/HsbIwol.png)"></div><p>Pondering</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/627iut8.jpg)"></div><p>Classic Blue</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/e1Eu81Z.jpg)"></div><p>Reaching</p><p>(Outline)</p></button>
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/lS0wBH6.png)"></div><p>Cake Slice</p><p>(Outline)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/3LawXJD.jpg)"></div><p>Drawing Kirby</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/PQUA2VN.png)"></div><p>Gudetama</p><p>(Outline)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/ZjQ3AZn.jpg)"></div><p>Minecraft Fox</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/HZuhNbi.jpg)"></div><p>Pears</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="reference" class="drawing"><div style="background-image: url(https://i.imgur.com/IGkKfxF.jpg)"></div><p>Grapefruits</p><p>(Reference)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/HsbIwol.png)"></div><p>Pondering</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="prompt" class="drawing"><div style="background-image: url(https://i.imgur.com/627iut8.jpg)"></div><p>Classic Blue</p><p>(Prompt)</p></button>
+		<button type="submit" name="type" value="outline" class="drawing"><div style="background-image: url(https://i.imgur.com/e1Eu81Z.jpg)"></div><p>Reaching</p><p>(Outline)</p></button>
+		
+	</form>
+	<h3 style="text-align: center; margin: 4vh; margin-bottom: 2vh;">Today's Hottest Clashes</h3>
+	<div class="scrollable" id="scroll2">
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ntu8TtP.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Hermione</p><p>(Reference)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/E8Fth0v.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Zuko</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/Zja13xe.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Soccer Ball</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/V2md4xX.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Lannisters</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/5IFkkmq.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Beth Harmon</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/gNKCh2l.png)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Chess</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/JgQ2Plc.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Psychedelic</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ZgdHVHZ.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Cerebrus</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/yuGaaYK.png)"><img src="https://i.imgur.com/yuGaaYK.png"/></div><p>#Girlboss</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ntu8TtP.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Hermione</p><p>(Reference)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/E8Fth0v.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Zuko</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/Zja13xe.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Soccer Ball</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/V2md4xX.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Lannisters</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/5IFkkmq.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Beth Harmon</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/gNKCh2l.png)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Chess</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/JgQ2Plc.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Psychedelic</p><p>(Outline)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/ZgdHVHZ.jpg)"><img src="https://i.imgur.com/xkxgMwl.png"/></div><p>Cerebrus</p><p>(Prompt)</p></a>
+		<a href="leaderboard" class="drawing"><div style="background-image: url(https://i.imgur.com/yuGaaYK.png)"><img src="https://i.imgur.com/yuGaaYK.png"/></div><p>#Girlboss</p><p>(Prompt)</p></a>
+	</div>
+	
+	<!-- Drawing Type -->
+	<div id="draw-type" style="display: none; width: 100%; text-align: center; position: absolute; z-index: 1; top: 0; background-image: linear-gradient(rgba(18, 194, 233, 1), rgba(196, 113, 237, 0.9) 65%, rgba(247, 121, 125, 0.9)); height: 100vh; margin: 0; padding: 0;">
+		<h1 id="close-new" style="position: absolute; right: 5vh; top: 2vh; cursor: pointer;">&times;</h1>
+		<h2 style="margin-top: 10vh;">Draw with a:</h2>
+		<form id="type-pop" action="artboard" method="GET">
+			<button type="submit" name="type" value="prompt" style="background-color: #12C2E9">
+				<h2>Prompt</h2><p>Receive a phrase, and let your imagination run wild!</p>
+			</button>
+			<button type="submit" name="type" value="reference" style="background-color: #C471ED">
+				<h2>Reference</h2><p>Use a visual aid to guide your creative process!</p>
+			</button>
+			<button type="submit" name="type" value="outline" style="background-color: #F64F59">
+				<h2>Outline</h2><p>Focus on coloring by tracing pre-drawn outlines!</p>
+			</button>
+		</form>
+	</div>
+	<nav style="z-index: 2">
+		<a href="home"><img src="https://i.imgur.com/nYUeOdV.png"></a>
+		<a href="clashes"><img src="https://i.imgur.com/sPbtI47.png"></a>
+		<a href="profile"><img src="https://i.imgur.com/s1nX6sX.png"></a>
+	</nav>
+	<script type="text/javascript" canvas="canvas">
+		var username = new URLSearchParams(window.location.search).get('username');
+		if (username == null) {
+			document.getElementById('greeting').innerHTML = "Hi, Anonymous!";
+		} else {
+			document.getElementById('greeting').innerHTML = "Hi, " + username + "!";
+		}
+		var open = document.getElementById("open-new");
+		var close = document.getElementById("close-new");
+		var draw_type = document.getElementById("draw-type");
+	
+		open.onclick = function() {
+			draw_type.style.display = "block";
+		}
+		close.onclick = function() {
+			draw_type.style.display = "none";
+		}
+	</script>
+	<script id="scrollers">
+		var scroll1 = document.getElementById('scroll1');
+		var isDown1 = false;
+		var startX1;
+		var scrollLeft1;
+		scroll1.addEventListener('mousedown', (e) => {
+			isDown1 = true;
+			startX1 = e.pageX - scroll1.offsetLeft;
+			scrollLeft1 = scroll1.scrollLeft;
+		});
+		scroll1.addEventListener('mouseleave', () => {
+			isDown1 = false;
+		});
+		scroll1.addEventListener('mouseup', () => {
+			isDown1 = false;
+		});
+		scroll1.addEventListener('mousemove', (e) => {
+			if(!isDown1) return;
+			e.preventDefault();
+			var walk1 = e.pageX - scroll1.offsetLeft - startX1;
+			scroll1.scrollLeft = scrollLeft1 - walk1;
+		});
+		var scroll2 = document.getElementById('scroll2');
+		var isDown2 = false;
+		var startX2;
+		var scrollLeft2;
+		scroll2.addEventListener('mousedown', (e) => {
+			isDown2 = true;
+			startX2 = e.pageX - scroll2.offsetLeft;
+			scrollLeft2 = scroll2.scrollLeft;
+		});
+		scroll2.addEventListener('mouseleave', () => {
+			isDown2 = false;
+		});
+		scroll2.addEventListener('mouseup', () => {
+			isDown2 = false;
+		});
+		scroll2.addEventListener('mousemove', (e) => {
+			if(!isDown2) return;
+			e.preventDefault();
+			var walk2 = e.pageX - scroll2.offsetLeft - startX2;
+			scroll2.scrollLeft = scrollLeft2 - walk2;
+		});
+	</script>
+</body>
+</html>
